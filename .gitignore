@@ -26,4 +26,5 @@ test
 trial_data.txt
 *.log
 saves
+.DS_Store
 
