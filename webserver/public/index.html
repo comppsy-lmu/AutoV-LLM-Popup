@@ -17,7 +17,24 @@
 <script>
 
 
+var POPUP_CONFIG = [
+  { min: 0,  max: 10,  probability: 0.30 },
+  { min: 11, max: 50,  probability: 1.00 },
+  { min: 51, max: 70,  probability: 0.70 },
+  { min: 71, max: 100, probability: 0.20 },
+];
 
+var POPUP_MESSAGE = "Keep in mind to talk about what factors helped you remember the word!";
+
+function shouldShowPopup(absValue) {
+  for (var i = 0; i < POPUP_CONFIG.length; i++) {
+    var range = POPUP_CONFIG[i];
+    if (absValue >= range.min && absValue <= range.max) {
+      return Math.random() < range.probability;
+    }
+  }
+  return false;
+}
 
 /* initialize jsPsych */
 var jsPsych = initJsPsych({
@@ -881,6 +898,44 @@ var trial_slider = {
         '<span style ="font-family: Monospace; font-size:20px; margin:10px">pretty sure</span>',
         '<span style ="font-family: Monospace; font-size:20px; margin:10px">100% positive</span>'
           ],
+
+    on_load: function() {
+      window._currentTrialPopupShown = false;
+      var firstInteractionHandled = false;
+      var sliderEl = document.querySelector('#jspsych-html-slider-response-response');
+
+      function onFirstSliderInteraction() {
+        if (firstInteractionHandled) return;
+        
+        var absValue = Math.abs(sliderEl.valueAsNumber);
+
+        if (shouldShowPopup(absValue)) {
+          firstInteractionHandled = true;
+          window._currentTrialPopupShown = true;
+
+          var overlay = document.createElement('div');
+          overlay.id = 'popup-reminder-overlay';
+          overlay.style.cssText =
+            'position:fixed; top:0; left:0; width:100%; padding:18px 0; ' +
+            'background-color:rgba(50,100,220,0.92); color:white; ' +
+            'font-family:Monospace; font-size:22px; text-align:center; ' +
+            'z-index:10000; box-shadow:0 2px 8px rgba(0,0,0,0.3);';
+          overlay.textContent = POPUP_MESSAGE;
+          document.body.appendChild(overlay);
+        }
+      }
+
+      sliderEl.addEventListener('mouseup', onFirstSliderInteraction);
+      sliderEl.addEventListener('pointerup', onFirstSliderInteraction);
+      sliderEl.addEventListener('change', onFirstSliderInteraction);
+    },
+
+    on_finish: function(data) {
+      data.popup_shown = window._currentTrialPopupShown || false;
+      var el = document.getElementById('popup-reminder-overlay');
+      if (el) el.remove();
+      window._currentTrialPopupShown = false;
+    }
 };
 
 // Create an breake between test blocks
@@ -1047,40 +1102,60 @@ var test_procedure_body = {
   randomize_order: true
 }
 
-// or via description of the difficulty 
-timeline = [
-  {
-     type: jsPsychSpeechRecording,
-     start: true
-  },         
-  instruction_1,
-  instructions_1_2, 
-  instruction_1_3, 
-  instruction_1_4,
-  
-  test_procedure_cities, 
-  instruction_nBack, 
-  n_back_procedure, 
-  instruction_BeforeTestPhase,
-  cities_testPhase, 
-  instruction_btw_lists_1_2, 
+// dev mode for debugging purposes
+var urlParams = new URLSearchParams(window.location.search);
+var TESTING_MODE = urlParams.has('dev');
 
-  test_procedure_body, 
-  instruction_nBack, 
-  n_back_procedure, 
-  body_testPhase, 
-  instruction_btw_lists_2_3,  
-  
-  test_procedure_coutries, 
-  instruction_nBack, 
-  n_back_procedure, 
-  countries_testPhase, 
-  instruction_end,
-  {
-    type: jsPsychSpeechRecording,
-    start: false
-  }
-]
+if (TESTING_MODE) {
+  // Skip study phases, n-back tasks, and most instructions — jump straight to slider trials
+  timeline = [
+    {
+       type: jsPsychSpeechRecording,
+       start: true
+    },
+    instruction_BeforeTestPhase,
+    cities_testPhase,
+    instruction_end,
+    {
+      type: jsPsychSpeechRecording,
+      start: false
+    }
+  ]
+} else {
+  timeline = [
+    {
+       type: jsPsychSpeechRecording,
+       start: true
+    },
+    instruction_1,
+    instructions_1_2,
+    instruction_1_3,
+    instruction_1_4,
+
+    test_procedure_cities,
+    instruction_nBack,
+    n_back_procedure,
+    instruction_BeforeTestPhase,
+    cities_testPhase,
+    instruction_btw_lists_1_2,
+
+    test_procedure_body,
+    instruction_nBack,
+    n_back_procedure,
+    body_testPhase,
+    instruction_btw_lists_2_3,
+
+    test_procedure_coutries,
+    instruction_nBack,
+    n_back_procedure,
+    countries_testPhase,
+    instruction_end,
+    {
+      type: jsPsychSpeechRecording,
+      start: false
+    }
+  ]
+}
                      
 
 
