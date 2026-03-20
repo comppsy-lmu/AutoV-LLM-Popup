@@ -112,7 +112,7 @@ const sendData = (trial_data) => {
     const headers = {
         'Content-type': 'application/json'
     };
-    fetch('/saveTrialData', {
+    return fetch('/saveTrialData', {
         method: 'POST',
         headers: headers,
         body: JSON.stringify({
