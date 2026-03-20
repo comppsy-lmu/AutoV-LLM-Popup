@@ -110,8 +110,6 @@ const sendData = (trial_data) => {
     console.log(trial_data)
     console.log(uuid_jsRecording)
     const headers = {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'POST',
         'Content-type': 'application/json'
     };
     fetch('/saveTrialData', {
@@ -134,8 +132,6 @@ const sendData = (trial_data) => {
 const sendAudio = (file, trial_index) => {
     //console.log(uuid_jsRecording)
     const headers = {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'POST',
         'Content-type': 'application/json'
     };
     fetch('/save', {
