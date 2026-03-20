@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Memory Experiment -2</title>
+    <title>memory experiment - 2 corrected</title>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link href="https://unpkg.com/jspsych@7.3.3/css/jspsych.css" rel="stylesheet" type="text/css" /> 
@@ -17,26 +17,36 @@
 <script>
 
 
-    /* initialize jsPsych */
-    var jsPsych = initJsPsych({
+
+
+/* initialize jsPsych */
+var jsPsych = initJsPsych({
       on_finish: function() {
-        /* jsPsych.data.displayData();
-        jsPsych.data.get().localSave('csv','TestData.csv'); */
+        jsPsych.data.displayData();
+        // jsPsych.data.get().localSave('csv','TestData.csv'); 
+        //jsPsych.data.displayData();
+		    saveData(jsPsych.data.get().csv());
         sendData(jsPsych.data.allData.trials);
       },
       on_trial_start: function(trial) {
         onTrialStartRecording(trial);
-        /* console.log(jsPsych.data)
-        console.log(trial) */
-        
+        //console.log(jsPsych.data)
+        //console.log(trial)
       },
       on_trial_finish: function(trial) {
         onTrialFinishRecording(trial);
       }
-    });
+});
 
+
+function  saveData(data){
+	var  xhr  =  new  XMLHttpRequest();
+	xhr.open('POST', 'write_data.php'); // 'write_data.php' is the path to the php file described above.
+	xhr.setRequestHeader('Content-Type', 'application/json');
+	xhr.send(JSON.stringify({filedata:  data}));
+}
 /* create timeline */
-    var timeline = [];
+var timeline = [];
 
 
 var instruction_1 = {
@@ -120,7 +130,7 @@ var instruction_btw_lists_2_3 = {
 var instruction_end = {
   type: jsPsychHtmlKeyboardResponse,
   stimulus: "<div style = 'font-size: 28px;font-family: Monospace'>End of the Experiment." +
-  "<br><br><br><br><span style='color: red;'>Here is your completion code: C178W5AP</span><br><br>Press the SPACE key to end the experiment and click 'ok' to send your data. <br><br>After copying this code, you can close the Website's tab.  </div>",
+  "<br><br><br><br><span style='color: red;'>Press the SPACE key to end the experiment and click 'ok' to send your data. <br><br>Here is your completion code: C178W5AP</span><br><br>After copying this code, you can close the Website's tab.  </div>",
   choices: [" "],
 }
 
@@ -148,12 +158,27 @@ var words_unrelated = ["ape", "bard", "bile", "blitz", "brink", "brook", "broth"
                       "peel", "pout", "prize", "prose", "prove", "punt", "roam", "rove", "shout", "shove",
                       "slope", "sloth", "slot", "spat", "spew", "spout", "spume", "streak", "stroke", "swim",
                       "tilt", "toot", "trope", "veal", "weal", "wilt", "woof", "wool", "yarn", "zoom",              
-                      "TOWN","CHILD","FEEL","LAND","GIRL","SIX","FRONT","VOICE","AGE",
-                      "WIFE","COST","COURT","FORCE","LOVE","TURN","CLOSE","WEST","JOB","BOARD","CHANGE","SOUTH","BOY",
-                      "STREET","AIR","MISS","KEEP","CAR","FIELD","WORD","HALF","WEEK","DEATH"];
-
-words_unrelated = words_unrelated.map(v => v.toLowerCase());
-
+                      "town", "child", "feel", "land", "girl", "six", "front", "voice", "age", "wife",
+                      "cost", "court", "force", "love", "turn", "close", "west", "job", "board", "change",
+                      "south", "boy", "street", "air", "miss", "keep", "car", "field", "word", "half", "week","death",
+                      "ache", "bathe", "berth", "bind", "blink", "bliss", "brew", "brim", "bug", "chrome", 
+                      "clump", "coke", "crush", "dime", "dove", "flint", "flip", "foul", "freak", "funk", 
+                      "fuss", "gag", "gem", "germ", "glee", "goose", "grape", "grate", "greed", "groin", 
+                      "growl", "hack", "haunt", "helm", "hem", "hilt", "hog", "hoop", "howl", "hug", "hurl", 
+                      "hush", "knack", "lag", "lard", "leash", "lick", "lint", "lobe", "loot", "lunge", 
+                      "mall", "marsh", "mesh", "mole", "mop", "mule", "muse", "nap", "nip", "noose", 
+                      "ore", "ounce", "pane", "paw", "peach", "peg", "pest", "pier", "pimp", "pledge", 
+                      "plump", "plush", "pod", "psalm", "quart", "raft", "rhyme", "rum", "rung", 
+                      "rye", "sag", "salve", "sash", "scalp", "scare", "scarf", "scorn", "scrape", 
+                      "scribe", "shawl", "sheaf", "sheath", "shin", "shred", "sill", "sine", "skull", 
+                      "slam", "slant", "slash", "smack", "smash", "smelt", "smirk", "snag", "snatch", 
+                      "snort", "sock", "sow", "spice", "splash", "spoil", "spouse", "sprawl", "spree",
+                      "stab", "starch", "stink", "stitch", "stoop", "stout", "stripe", "stroll", "strut",
+                       "stub", "swan", "swarm", "swine", "tack", "tang", "taunt", "thirst", "thorn", 
+                       "throng", "thud", "thump", "tick", "toad", "toy", "trait", "trance", "tribe", 
+                       "trout", "tug", "turf", "twinge", "twitch", "vale", "valve", "vase", "verb", 
+                       "verve", "vest", "vine", "warp", "wedge", "weld", "wharf", "whine", "whir", 
+                       "whirl", "wick", "worm", "yacht", "yeast", "yoke"];
 
 
 // List of cities:
@@ -174,8 +199,8 @@ var words_countries = ["canada", "france", "mexico", "england", "germany",
                       "chile", "britain", "iran", "portugal", "greece", 
                       "scotland", "egypt", "israel", "peru", "belgium", 
                       "korea", "norway", "denmark", "lebanon", "malaysia", 
-                      "poland", "taiwan", "romania", "serbia", "singapore", 
-                      "indonesia", "taiwan", "turkey", "vietnam", "thailand", 
+                      "poland", "taiwan", "austria", "romania", "serbia", "singapore", 
+                      "indonesia", "turkey", "vietnam", "thailand", 
                       "philippines", "pakistan", "netherlands"];
 
 // List of body parts:
@@ -189,7 +214,7 @@ var words_body = ["leg", "arm", "nail", "muscle", "feet", "finger", "head",
                   "knuckle", "heel", "skin", "cheeks", "eyelid"]
 
 
-// Create the list of stimuli
+/// Create the list of stimuli with the <p> tag around it 
 var study_list_unrelated = insertWordsToStructure(words_unrelated);
 var study_list_cities = insertWordsToStructure(words_cities);
 var study_list_countries = insertWordsToStructure(words_countries);
@@ -200,100 +225,105 @@ var study_list_body = insertWordsToStructure(words_body);
 /// Memory Task - Study Phase ///
 ////////////////////////////////
 
-// create empty objects to hold the stimuli.
-cities_list_html = [];
-countires_list_html = [];
-body_list_html = [];
-unrelated_list_html = [];
+// Create empty arrays to hold the stimuli for each category
+var cities_list_html = [];
+var countries_list_html = [];
+var body_list_html = [];
+var unrelatedWords_html = [];
 
-// loop to fill up the empty objects, each of the length 100 (at the end each participant learns about 32 words of each list)
+// Populate each array with the corresponding word list
 for (let i = 0; i < study_list_cities.length; i++) {
-  cities_list_html.push(
-    study_list_cities[i] // length 48
-  );
+        cities_list_html.push(study_list_cities[i]);
 }
 
 for (let i = 0; i < study_list_unrelated.length; i++) {
-  unrelated_list_html.push(
-    study_list_unrelated[i] // length 100
-  );
+      unrelatedWords_html.push(study_list_unrelated[i]); //still length of 132
 }
 
-
 for (let i = 0; i < study_list_countries.length; i++) {
-  countires_list_html.push(
-    study_list_countries[i] // length 48
-  );
+        countries_list_html.push(study_list_countries[i]);
 }
 
 for (let i = 0; i < study_list_body.length; i++) {
-  body_list_html.push(
-    study_list_body[i] // length 48
-  );
+        body_list_html.push(study_list_body[i]);
 }
 
-
-// create a fixation cross
+// Create a fixation cross to display between trials
 var fixation = {
-  type: jsPsychHtmlKeyboardResponse,
-  stimulus: '<div style="font-size:60px;">+</div>',
-  choices: "NO_KEYS",
-  trial_duration: 1000,
+        type: jsPsychHtmlKeyboardResponse,
+        stimulus: '<div style="font-size:60px;">+</div>',
+        choices: "NO_KEYS", // No keys to press, just a visual pause
+        trial_duration: 1000, // Display the fixation cross for 1 second
 };
 
-// a function that randomaly smaples from the list. It takes an array of objects and the length of the sample as arguments. 
-function sampleRandomly20(arr, count) {
+
+//a Random Sampling function 
+function sampleRandomly(arr, count) {
     let result = [];
     let tempArray = arr.slice(); // Create a copy of the original array
-
-    for (let i = 0; i < count; i++) {
-        if(tempArray.length === 0) break; // Break if there are no more elements to sample
-        const randomIndex = Math.floor(Math.random() * tempArray.length);
-        result.push(tempArray[randomIndex]);
-        tempArray.splice(randomIndex, 1); // Remove the selected element
-
-        arr.splice(randomIndex, 1);
-    }
-
+      for (let i = 0; i < count; i++) {
+          if(tempArray.length === 0) break; // Break if there are no more elements to sample
+          const randomIndex = Math.floor(Math.random() * tempArray.length);
+          result.push(tempArray[randomIndex]);
+          tempArray.splice(randomIndex, 1); // Remove the selected element
+          arr.splice(randomIndex, 1);
+      }
     return result;
 }
 
-function sampleWithReplacement(arr, count) {
-  let result = [];
-  for (let i = 0; i < count; i++) {
-      if(arr.length === 0) break; // Break if there are no more elements to sample
-      const randomIndex = Math.floor(Math.random() * arr.length);
-      result.push(arr[randomIndex]);
-  }
-
-  return result;
-}
-
-
-// sample N from each list sampling without replacememnt 
-cities_20array = sampleRandomly20(study_list_cities, 16)  
-countries_20array = sampleRandomly20(study_list_countries, 16)  
-body_20array = sampleRandomly20(study_list_body, 16)  
-
-random_20array = sampleRandomly20(study_list_unrelated, 16*3)
-var random_left = [];
-var random_left = unrelated_list_html.filter(item => !random_20array.includes(item));
+// function sampleRandomly(arr, count) {
+//     let result = [];
+//     let tempArray = arr.slice(); // Create a copy of the original array
+//     for (let i = 0; i < count; i++) {
+//         if (tempArray.length === 0) break; // Break if there are no more elements to sample
+//         const randomIndex = Math.floor(Math.random() * tempArray.length);
+//         result.push(tempArray[randomIndex]);
+//         tempArray.splice(randomIndex, 1); // Remove the selected element from tempArray
+//     }
+//     return result;
+// }
 
 
-let array_cities = Object.values(cities_20array);
-let array_countries = Object.values(countries_20array);
-let array_body = Object.values(body_20array);
+
+// 16 first words extracted from the context-words arrays
+cities_array = study_list_cities.slice(0, 16); //length=16
+var remaining_cities = study_list_cities.slice(16,48); //32 new (unused) cities words
+
+body_array = study_list_body.slice(0, 16);
+var remaining_body = study_list_body.slice(16,48); //32 new (unused) body parts words
+
+countries_array = study_list_countries.slice(0, 16); //length = 16
+var remaining_countries = study_list_countries.slice(16,48); //32 new (unused) countries words
 
 
-// add unrelated words to each of the test lists. For example, for the list of body parts of the length X,
-// a list of unrelated words of the same length will be added.
-var random_20array_tmp = random_20array.slice()
-var cities_list = array_cities.concat(sampleRandomly20(random_20array_tmp, 16));
-var countries_list = array_countries.concat(sampleRandomly20(random_20array_tmp, 16));
-var body_list = array_body.concat(sampleRandomly20(random_20array_tmp, 16));
+// 64 random words for each of the 4 word lists (16*4)
+randomWords = study_list_unrelated.slice(0, 64);// length 64
+var remaining_unrelated = study_list_unrelated.slice(64,250); //299 new (unused) unrelated words
+
+var random_left = []; //empty array to store the left-over words
+var random_left = unrelatedWords_html.filter(item => !randomWords.includes(item));
 
 
-// create part of a trial, on which the stimulus is presented for the time duration of 2ms. 
+//extract the 16 values from the objects holding sampled cities, countries, and body parts
+let array_cities = Object.values(cities_array);
+let array_countries = Object.values(countries_array);
+let array_body = Object.values(body_array);
+
+
+// add unrelated words to each of the test lists. 
+var randomWords_tmp = randomWords.slice()
+
+var taken_unrelated_cities = sampleRandomly(randomWords_tmp, 16)
+var cities_list = array_cities.concat(taken_unrelated_cities);// add unrelated words to cities list
+
+var taken_unrelated_body = sampleRandomly(randomWords_tmp, 16)
+var body_list = array_body.concat(taken_unrelated_body); // add unrelated words to body parts list
+
+var taken_unrelated_countries = sampleRandomly(randomWords_tmp, 16)
+var countries_list = array_countries.concat(taken_unrelated_countries); // add unrelated words to countries list
+
+
+// create part of a trial, on which the stimulus is presented for the time duration of 2.5s. 
 var test = {
   type: jsPsychHtmlKeyboardResponse,
   stimulus: jsPsych.timelineVariable('stimulus'),
@@ -304,30 +334,35 @@ var test = {
 
 //////////////////////////////////////////
 //// A Distraction Task: N-Back Task /////
-/////////////////////////////////////////
+//////////////////////////////////////////
 
+// Instruction screen for the N-Back task
 var instruction_nBack = {
   type: jsPsychHtmlKeyboardResponse,
-  stimulus: "<div style = 'font-size: 30px;font-family: Monospace'>"+
-  "<br>Before the test phase begins, you will complete a short activity."+
-  "<br><br>You will be shown a sequence of numbers, presented one at a time."+
-  "<br><br><br>Your task is to determine whether each current stimulus matches the one presented 2 steps earlier in the sequence."+
-  "<div style ='display:inline-block;vertical-align:middle;'><br><br>For example, if you see the following numbers &#x2192; <img src = 'img/nBack_black.png'; style='height: 100px ; width: 280px;vertical-align:middle;'></div>"+
-  "<div style ='display:inline-block;vertical-align:middle;'><br><br><br>You should press the Enter key for the numbers 3 and 8 &#x2192; <img src = 'img/nBack_red.png'; style='height: 90px ;width: 280px;vertical-align:middle;padding-bottom:30px'></div>"+
-  "<br><br><br><br> Press the SPACE key to start the task"+
-  "</div>"
-}
+  stimulus: "<div style='font-size: 30px;font-family: Monospace'>" +
+    "<br>Before the test phase begins, you will complete a short activity." +
+    "<br><br>You will be shown a sequence of numbers, presented one at a time." +
+    "<br><br><br>Your task is to determine whether each current stimulus matches the one presented 2 steps earlier in the sequence." +
+    // Example illustrating the task with images for better understanding
+    "<div style='display:inline-block;vertical-align:middle;'><br><br>For example, if you see the following numbers &#x2192; " +
+    "<img src='img/nBack_black.png' style='height: 100px; width: 280px; vertical-align:middle;'></div>" +
+    "<div style='display:inline-block;vertical-align:middle;'><br><br><br>You should press the Enter key for the numbers 3 and 8 &#x2192; " +
+    "<img src='img/nBack_red.png' style='height: 90px; width: 280px; vertical-align:middle; padding-bottom:30px'></div>" +
+    "<br><br><br><br> Press the SPACE key to start the task" +
+    "</div>",
+  choices: [" "] // Wait for the participant to press SPACE to proceed
+};
 
-// create an array of numbers 
+// Function to generate the sequence for the N-Back task
+// It generates a sequence where every x-th number repeats a number that appeared earlier (2 steps back here).
 function generateNBackSequence(length, x) {
-
     let sequence = [];
     for (let i = 0; i < length; i++) {
         if ((i + 1) % x === 0 && i > 1) {
-            // Every x-th element should be the same as the second-to-last number
+            // Make the current number the same as the one presented two steps earlier
             sequence.push(sequence[sequence.length - 2]);
         } else {
-            // Generate a random number (e.g., between 0 and 9)
+            // Generate a random number between 0 and 9
             let randomNumber = Math.floor(Math.random() * 10);
             sequence.push(randomNumber);
         }
@@ -335,490 +370,533 @@ function generateNBackSequence(length, x) {
     return sequence;
 }
 
-// Example usage
-let sequence = generateNBackSequence(20, 2); // Generate a sequence of 20 numbers where every 4th number is the same as the second-to-last number
+// Example usage of the generateNBackSequence function
+let sequence = generateNBackSequence(20, 2); // Generate a sequence of 20 numbers where every 2nd number is the same as two steps earlier
 
+// Define the stimuli for the N-Back task, using the generated sequence
+var n = sequence.map(num => ({
+  n: `<p style="font-size:60px;font-family: Monospace">${num}</p>`
+}));
 
-var n = [
-  {n: "<p style=\"font-size:60px;font-family: Monospace\">" + sequence[0] + "</p>"},
-  {n: "<p style=\"font-size:60px;font-family: Monospace\">" + sequence[1] + "</p>"},
-  {n: "<p style=\"font-size:60px;font-family: Monospace\">" + sequence[2] + "</p>"},
-  {n: "<p style=\"font-size:60px;font-family: Monospace\">" + sequence[3] + "</p>"},
-  {n: "<p style=\"font-size:60px;font-family: Monospace\">" + sequence[4] + "</p>"},
-  {n: "<p style=\"font-size:60px;font-family: Monospace\">" + sequence[5] + "</p>"},
-  {n: "<p style=\"font-size:60px;font-family: Monospace\">" + sequence[6] + "</p>"},
-  {n: "<p style=\"font-size:60px;font-family: Monospace\">" + sequence[7] + "</p>"},
-  {n: "<p style=\"font-size:60px;font-family: Monospace\">" + sequence[8] + "</p>"},
-  {n: "<p style=\"font-size:60px;font-family: Monospace\">" + sequence[9] + "</p>"},
-  {n: "<p style=\"font-size:60px;font-family: Monospace\">" + sequence[10] + "</p>"}
-]
-
-// create the stimilus representation N-Back task, on which the participants has to 
-//press a key if the Nth number ago was identical to the currently presented one. Each number is presented for 1000ms. 
+// Create an N-Back task trial where each number is presented for 1000ms
+// Participants must press a key if the current number matches the one presented two steps earlier
 var n_back = {
   type: jsPsychHtmlKeyboardResponse,
-  stimulus: jsPsych.timelineVariable('n'),
-  trial_duration: 1000,
-  choices: ["k", "d"]
-}
-
-// Create a trial, on which numbers are presented sequentially separated by a fixation corss. 
-var n_back_procedure = {
-  timeline: [fixation, n_back],
-  timeline_variables: n,
-  randomize_order: false
-}
-
-// an introduction page for the N-back task 
-var n_back_intro = {
-    type: jsPsychHtmlKeyboardResponse,
-    stimulus: "<div style = 'font-size: 30px;font-family: Monospace'>Press the space key to begin the next (n-back) task</div>",
-    choices: [" "]
+  stimulus: jsPsych.timelineVariable('n'), // The number stimulus
+  trial_duration: 1000, // Each number is shown for 1000 milliseconds
+  choices: ["k", "d"] // Participants press 'k' or 'd' to respond
 };
 
+// Define the N-Back task procedure
+// It presents numbers sequentially, each separated by a fixation cross
+var n_back_procedure = {
+  timeline: [fixation, n_back], // Show fixation cross and then the number stimulus
+  timeline_variables: n, // Use the array of number stimuli generated earlier
+  randomize_order: false // Present the numbers in the original order (no randomization)
+};
+
+// Introduction page for the N-Back task
+var n_back_intro = {
+  type: jsPsychHtmlKeyboardResponse,
+  stimulus: "<div style='font-size: 30px;font-family: Monospace'>Press the SPACE key to begin the next (N-Back) task</div>",
+  choices: [" "] // Wait for the participant to press SPACE to begin
+};
 
 
 ////////////////////////////////
 /// Memory Task - Test Phase ///
 ////////////////////////////////
 
-// sample of old words 
-var cityNew_unrelatedOld_pairs = [];
-var cityOld_unrelatedNew_pairs = [];
-var unrelatedOld_unrelatedNew_pairs = [];
-var relatedNew_relatedNew_pairs = [];
-var unrelatedNew_unrelatedNew_pairs = [];
-var countries_combinedTexts = [];
-var body_combinedTexts = [];
-
-
-// shuffeling function for the location of the stimuli on the scales
+// Function to shuffle the order of two words for display on the response scale
 function shuffleWords(word1, word2) {
+  // 50% chance to return the words in different order
   return Math.random() > 0.5 ? [word1, word2] : [word2, word1];
 }
 
-
+// Arrays to hold word pairs for the "countries" category
 var countries_first = []; 
-var countries_second= []; 
+var countries_second = []; 
 var countries_pairs = [];
 
+// Arrays to hold word pairs for the "cities" category
 var cities_first = []; 
-var cities_second= []; 
+var cities_second = []; 
 var cities_pairs = [];
 
+// Arrays to hold word pairs for the "body parts" category
 var body_first = []; 
-var body_second= []; 
+var body_second = []; 
 var body_pairs = [];
 
-var remaining_cities = study_list_cities
-var taken_cities = cities_20array
+// Initialize the remaining and taken word lists for cities, countries, and body parts
+//var remaining_cities = study_list_cities.slice(16, length.study_list_cities); // Cities not yet sampled
+var taken_cities = cities_array; // Cities already sampled
+// console.log("taken cities",taken_cities)
+// console.log("remaining cities",remaining_cities)
 
-var remaining_countries = study_list_countries
-var taken_countries = countries_20array
+var taken_countries = countries_array; // Countries already sampled
+var taken_body = body_array; // Body parts already sampled
 
-var remaining_body = study_list_body
-var taken_body = body_20array
 
-var remaining_unrelated = study_list_unrelated
 
-console.log(remaining_unrelated)
-var taken_unrelated = random_20array
+//// Trial Types: R0,R1 & R0,U1 & U0,R1 & U0,U1 & ////
 
+// Loop 8 times to generate the word pairs for the cities, countries, and body categories
 for (let g = 0; g < 8; g++) {
-  // R1 vs. R0
-  var cities_matched_old_1 = sampleRandomly20(taken_cities, 1)[0].stimulus.match(/>([^<]+)</);
+
+  /// Cities ///
+  
+  // R1 (old related) vs R0 (new related) word pair for cities
+  var cities_matched_old_1 = sampleRandomly(taken_cities, 1)[0].stimulus.match(/>([^<]+)</);
   var cities_old_1 = cities_matched_old_1 ? cities_matched_old_1[1] : '';
-  var cities_matched_new = sampleRandomly20(remaining_cities,1)[0].stimulus.match(/>([^<]+)</);
+  var cities_matched_new = sampleRandomly(remaining_cities, 1)[0].stimulus.match(/>([^<]+)</);
   var cities_new_1 = cities_matched_new ? cities_matched_new[1] : '';
-  // R0 vs. U1
-  var cities_matched_new_2 = sampleRandomly20(remaining_cities,1)[0].stimulus.match(/>([^<]+)</);
+
+  // R0 (new related) vs U1 (old unrelated) word pair for cities
+  var cities_matched_new_2 = sampleRandomly(remaining_cities, 1)[0].stimulus.match(/>([^<]+)</);
   var cities_new_2 = cities_matched_new_2 ? cities_matched_new_2[1] : '';
-  var random_matched_old = sampleRandomly20(taken_unrelated, 1)[0].stimulus.match(/>([^<]+)</);
+  var random_matched_old = sampleRandomly(taken_unrelated_cities, 1)[0].stimulus.match(/>([^<]+)</);
   var random_old_1 = random_matched_old ? random_matched_old[1] : ''; 
-  // R1 vs. U0
-  var cities_matched_old_2 = sampleRandomly20(taken_cities, 1)[0].stimulus.match(/>([^<]+)</);
+
+  // R1 (old related) vs U0 (new unrelated) word pair for cities
+  var cities_matched_old_2 = sampleRandomly(taken_cities, 1)[0].stimulus.match(/>([^<]+)</);
   var cities_old_2 = cities_matched_old_2 ? cities_matched_old_2[1] : '';
-  var random_matched_new_1 = sampleRandomly20(remaining_unrelated, 1)[0].stimulus.match(/>([^<]+)</);
+  var random_matched_new_1 = sampleRandomly(remaining_unrelated, 1)[0].stimulus.match(/>([^<]+)</);
   var random_new_1 = random_matched_new_1 ? random_matched_new_1[1] : ''; 
-  // U1 vs. U0
-  var random_matched_old_2 = sampleRandomly20(taken_unrelated,1)[0].stimulus.match(/>([^<]+)</);
+
+  // U1 (old unrelated) vs U0 (new unrelated) word pair for cities
+  var random_matched_old_2 = sampleRandomly(taken_unrelated_cities, 1)[0].stimulus.match(/>([^<]+)</);
   var random_old_2 = random_matched_old_2 ? random_matched_old_2[1] : '';
-  var random_matched_new_2 = sampleRandomly20(remaining_unrelated,1)[0].stimulus.match(/>([^<]+)</);
+  var random_matched_new_2 = sampleRandomly(remaining_unrelated, 1)[0].stimulus.match(/>([^<]+)</);
   var random_new_2 = random_matched_new_2 ? random_matched_new_2[1] : ''; 
 
-  cities_first.push({R1: cities_old_1}, {R0: cities_new_2}, {R1: cities_old_2}, {U1: random_old_2})
-  cities_second.push({R0: cities_new_1}, {U1: random_old_1}, {U0: random_new_1}, {U0: random_new_2})
 
-  ////////////////////////////////////////////////////////////////////////////////////////////
+// Sample a mixed pair of unrelated and related (U0 vs. R0 - cities)
+  var unrelated_new_3 = sampleRandomly(remaining_unrelated, 1)[0].stimulus.match(/>([^<]+)</);
+  unrelated_new_3 = unrelated_new_3 ? unrelated_new_3[1] : ''; // Extract word
 
-  //// Countries VS. Unrelated
+  var related_new_cities_3 = sampleRandomly(remaining_cities, 1)[0].stimulus.match(/>([^<]+)</);
+  related_new_cities_3 = related_new_cities_3 ? related_new_cities_3[1] : ''; // Extract word
 
-  // R1 vs. R0
-  var countries_matched_old = sampleRandomly20(taken_countries,1)[0].stimulus.match(/>([^<]+)</);
+  // Store the first and second word pairs for cities
+  cities_first.push({R1: cities_old_1}, {R0: cities_new_2}, {R1: cities_old_2}, {U1: random_old_2}, {U0: unrelated_new_3});
+  cities_second.push({R0: cities_new_1}, {U1: random_old_1}, {U0: random_new_1}, {U0: random_new_2}, {R0: related_new_cities_3});
+
+
+  /// Countries ///
+
+  // R1 (old related) vs R0 (new related) word pair for countries
+  var countries_matched_old = sampleRandomly(taken_countries, 1)[0].stimulus.match(/>([^<]+)</);
   var countries_old = countries_matched_old ? countries_matched_old[1] : '';
-  var countries_matched_new_1 = sampleRandomly20(remaining_countries,1)[0].stimulus.match(/>([^<]+)</);
+  var countries_matched_new_1 = sampleRandomly(remaining_countries, 1)[0].stimulus.match(/>([^<]+)</);
   var countries_new_1 = countries_matched_new_1 ? countries_matched_new_1[1] : '';
-  // R0 vs. U1
-  var countries_matched_new_2 = sampleRandomly20(remaining_countries,1)[0].stimulus.match(/>([^<]+)</);
+
+  // R0 (new related) vs U1 (old unrelated) word pair for countries
+  var countries_matched_new_2 = sampleRandomly(remaining_countries, 1)[0].stimulus.match(/>([^<]+)</);
   var countries_new_2 = countries_matched_new_2 ? countries_matched_new_2[1] : '';
-  var random_matched_old_1 = sampleRandomly20(taken_unrelated,1)[0].stimulus.match(/>([^<]+)</);
+  var random_matched_old_1 = sampleRandomly(taken_unrelated_countries, 1)[0].stimulus.match(/>([^<]+)</);
   var random_old_1 = random_matched_old_1 ? random_matched_old_1[1] : ''; 
-  // R1 vs. U0
-  var countries_matched_old_2 = sampleRandomly20(taken_countries,1)[0].stimulus.match(/>([^<]+)</);
+
+  // R1 (old related) vs U0 (new unrelated) word pair for countries
+  var countries_matched_old_2 = sampleRandomly(taken_countries, 1)[0].stimulus.match(/>([^<]+)</);
   var countries_old_2 = countries_matched_old_2 ? countries_matched_old_2[1] : '';
-  var random_matched_new_1 = sampleRandomly20(remaining_unrelated,1)[0].stimulus.match(/>([^<]+)</);
+  var random_matched_new_1 = sampleRandomly(remaining_unrelated, 1)[0].stimulus.match(/>([^<]+)</);
   var random_new_1 = random_matched_new_1 ? random_matched_new_1[1] : ''; 
-  // U1 vs. U0
-  var random_matched_old = sampleRandomly20(taken_unrelated,1)[0].stimulus.match(/>([^<]+)</);
+
+  // U1 (old unrelated) vs U0 (new unrelated) word pair for countries
+  var random_matched_old = sampleRandomly(taken_unrelated_countries, 1)[0].stimulus.match(/>([^<]+)</);
   var random_old_2 = random_matched_old ? random_matched_old[1] : '';
-  var random_matched_new_2 = sampleRandomly20(remaining_unrelated, 1)[0].stimulus.match(/>([^<]+)</);
+  var random_matched_new_2 = sampleRandomly(remaining_unrelated, 1)[0].stimulus.match(/>([^<]+)</);
   var random_new_2 = random_matched_new_2 ? random_matched_new_2[1] : ''; 
 
 
-  countries_first.push({R1: countries_old}, {R0: countries_new_2}, {R1: countries_old_2}, {U1: random_old_2})
-  countries_second.push({R0: countries_new_1}, {U1: random_old_1}, {U0: random_new_1}, {U0: random_new_2})
+  // Sample a mixed pair of unrelated and related words for countries
+  var unrelated_new_cntr_3 = sampleRandomly(remaining_unrelated, 1)[0].stimulus.match(/>([^<]+)</);
+  unrelated_new_cntr_3 = unrelated_new_cntr_3 ? unrelated_new_cntr_3[1] : ''; 
 
+  var related_new_cntr_3 = sampleRandomly(remaining_countries, 1)[0].stimulus.match(/>([^<]+)</);
+  related_new_cntr_3 = related_new_cntr_3 ? related_new_cntr_3[1] : '';
 
-  ////////////////////////////////////////////////////////////////////////////////////////////
+  // Store the first and second word pairs for countries
+  countries_first.push({R1: countries_old}, {R0: countries_new_2}, {R1: countries_old_2}, {U1: random_old_2}, {U0: unrelated_new_cntr_3});
+  countries_second.push({R0: countries_new_1}, {U1: random_old_1}, {U0: random_new_1}, {U0: random_new_2}, {R0: related_new_cntr_3});
 
-  //// Body VS. Unrelated
+  
+  /// Body-Parts ///
 
-  // R1 vs. R0
-  var body_matched_old = sampleRandomly20(taken_body,1)[0].stimulus.match(/>([^<]+)</);
+  // R1 (old related) vs R0 (new related) word pair for body parts
+  var body_matched_old = sampleRandomly(taken_body, 1)[0].stimulus.match(/>([^<]+)</);
   var body_old = body_matched_old ? body_matched_old[1] : '';
-  var body_matched_new = sampleRandomly20(remaining_body, 1)[0].stimulus.match(/>([^<]+)</);
+  var body_matched_new = sampleRandomly(remaining_body, 1)[0].stimulus.match(/>([^<]+)</);
   var body_new_1 = body_matched_new ? body_matched_new[1] : '';
-  // R0 vs. U1
-  var body_matched_new_2 = sampleRandomly20(remaining_body, 1)[0].stimulus.match(/>([^<]+)</);
+
+  // R0 (new related) vs U1 (old unrelated) word pair for body parts
+  var body_matched_new_2 = sampleRandomly(remaining_body, 1)[0].stimulus.match(/>([^<]+)</);
   var body_new_2 = body_matched_new_2 ? body_matched_new_2[1] : '';
-  var random_matched_old = sampleRandomly20(taken_unrelated,1)[0].stimulus.match(/>([^<]+)</);
+  var random_matched_old = sampleRandomly(taken_unrelated_body, 1)[0].stimulus.match(/>([^<]+)</);
   var random_old = random_matched_old ? random_matched_old[1] : ''; 
-  // R1 vs. U0
-  var body_matched_old_2 = sampleRandomly20(taken_body,1)[0].stimulus.match(/>([^<]+)</);
+
+  // R1 (old related) vs U0 (new unrelated) word pair for body parts
+  var body_matched_old_2 = sampleRandomly(taken_body, 1)[0].stimulus.match(/>([^<]+)</);
   var body_old_2 = body_matched_old_2 ? body_matched_old_2[1] : '';
-  var random_matched_new_1 = sampleRandomly20(remaining_unrelated,1)[0].stimulus.match(/>([^<]+)</);
+  var random_matched_new_1 = sampleRandomly(remaining_unrelated, 1)[0].stimulus.match(/>([^<]+)</);
   var random_new_1 = random_matched_new_1 ? random_matched_new_1[1] : ''; 
-  // U1 vs. U0
-  var random_matched_old_2 = sampleRandomly20(taken_unrelated,1)[0].stimulus.match(/>([^<]+)</);
+
+  // U1 (old unrelated) vs U0 (new unrelated) word pair for body parts
+  var random_matched_old_2 = sampleRandomly(taken_unrelated_body, 1)[0].stimulus.match(/>([^<]+)</);
   var random_old_2 = random_matched_old_2 ? random_matched_old_2[1] : '';
-  var random_matched_new_2 = sampleRandomly20(remaining_unrelated,1)[0].stimulus.match(/>([^<]+)</);
+  var random_matched_new_2 = sampleRandomly(remaining_unrelated, 1)[0].stimulus.match(/>([^<]+)</);
   var random_new_2 = random_matched_new_2 ? random_matched_new_2[1] : ''; 
 
-  body_first.push({R1: body_old}, {R0: body_new_2}, {R1: body_old_2}, {U1: random_old_2})
-  body_second.push({R0: body_new_1}, {U1: random_old}, {U0: random_new_1}, {U0: random_new_2})
+  // Sample a mixed pair of unrelated and related words for body
+  var unrelated_new_bdy_3 = sampleRandomly(remaining_unrelated, 1)[0].stimulus.match(/>([^<]+)</);
+  unrelated_new_bdy_3 = unrelated_new_bdy_3 ? unrelated_new_bdy_3[1] : ''; 
 
+  var related_new_bdy_3 = sampleRandomly(remaining_body, 1)[0].stimulus.match(/>([^<]+)</);
+  related_new_bdy_3 = related_new_bdy_3 ? related_new_bdy_3[1] : '';
+
+  // Store the first and second word pairs for body parts
+  body_first.push({R1: body_old}, {R0: body_new_2}, {R1: body_old_2}, {U1: random_old_2},  {U0: unrelated_new_bdy_3});
+  body_second.push({R0: body_new_1}, {U1: random_old}, {U0: random_new_1}, {U0: random_new_2}, {R0: related_new_bdy_3});
 }
 
 
-
-pairs_cities_raw = []
-for (let h = 0; h <32; h++) {
-  var [displayedFirstWord, displayedSecondWord] = shuffleWords(Object.values(cities_first[h])[0], Object.values(cities_second[h])[0]);
-  var htmlString = `<div style="width:800px;font-family: Monospace; font-size:28px">
-                  <p>Use the response scale to indicate which word you remember, and how confident you are in your response.</p>
-                  <div style="width:240px; float: left;font-family: Monospace; font-size:28px">
-                      <p>${displayedFirstWord}</p>
-                  </div>
-                  <div style="width:240px; float: right;font-family: Monospace; font-size:28px">
-                      <p>${displayedSecondWord}</p>
-                  </div>
-                  </div>`;
-
-  cities_pairs.push({
-      slider: htmlString
-  });
-
-  pairs_cities_raw.push({
-      pair: [cities_first[h], cities_second[h]]
-  })
-}
-
-pairs_body_raw = [];
-for (let k = 0; k <32; k ++) {
-  var [displayedFirstWord, displayedSecondWord] = shuffleWords(Object.values(body_first[k])[0], Object.values(body_second[k])[0]);
-  var htmlString = `<div style="width:800px;font-family: Monospace; font-size:28px">
-                  <p>Use the response scale to indicate which word you remember, and how confident you are in your response.</p>
-                  <div style="width:240px; float: left;font-family: Monospace; font-size:28px">
-                      <p>${displayedFirstWord}</p>
-                  </div>
-                  <div style="width:240px; float: right;font-family: Monospace; font-size:28px">
-                      <p>${displayedSecondWord}</p>
-                  </div>
-                  </div>`;
-
-  body_pairs.push({
-      slider: htmlString
-  });
-  pairs_body_raw.push({
-      pair: [body_first[k], body_second[k]]
-  });
-}
-
-
-
+/// Create Divs For Disaply///
+// Initialize arrays to store data for cities, body parts, and countries
+var pairs_cities_raw = [];
+var pairs_body_raw = [];
 var pairs_countries_raw = [];
+var wordLocationArray_cities_long = [];
+var wordLocationArray_body_long = [];
+var wordLocationArray_countries_long = [];
 
-for (let j = 0; j <32; j ++) {
-  var [displayedFirstWord, displayedSecondWord] = shuffleWords(Object.values(countries_first[j])[0], Object.values(countries_second[j])[0]);
+// Array of configurations for each data type
+const dataTypes = [
+  {
+    name: "cities",
+    firstArray: cities_first,
+    secondArray: cities_second,
+    pairsRaw: pairs_cities_raw,
+    wordLocationArrayLong: wordLocationArray_cities_long,
+    pairsStorage: cities_pairs
+  },
+  {
+    name: "body parts",
+    firstArray: body_first,
+    secondArray: body_second,
+    pairsRaw: pairs_body_raw,
+    wordLocationArrayLong: wordLocationArray_body_long,
+    pairsStorage: body_pairs
+  },
+  {
+    name: "countries",
+    firstArray: countries_first,
+    secondArray: countries_second,
+    pairsRaw: pairs_countries_raw,
+    wordLocationArrayLong: wordLocationArray_countries_long,
+    pairsStorage: countries_pairs
+  }
+];
+
+// Regular expression to match the divs with float (left or right) and extract the word inside <p> tags
+var regex = /<div[^>]*float:\s*(left|right)[^>]*>\s*<p[^>]*>([^<]*)<\/p>\s*<p[^>]*>([^<]*)<\/p>/g;
+
+// Loop through each data type (cities, body parts, countries)
+for (const dataType of dataTypes) {
+  for (let i = 0; i < 40; i++) {
+    // Shuffle and assign displayed words, separating trialType and word
+    var [firstEntry, secondEntry] = shuffleWords(
+      Object.entries(dataType.firstArray[i])[0],
+      Object.entries(dataType.secondArray[i])[0]
+    );
+
+    // Extract trialType and word for both left and right
+    var trialTypeFirst = firstEntry[0];
+    var displayedFirstWord = firstEntry[1];
+    var trialTypeSecond = secondEntry[0];
+    var displayedSecondWord = secondEntry[1];
+
+   // Generate HTML string with the words and hidden trial types
   var htmlString = `<div style="width:800px;font-family: Monospace; font-size:28px">
                     <p>Use the response scale to indicate which word you remember, and how confident you are in your response.</p>
                     <div style="width:240px; float: left;font-family: Monospace; font-size:28px">
+                        <p style="display:none;">${trialTypeFirst}</p>
                         <p>${displayedFirstWord}</p>
                     </div>
                     <div style="width:240px; float: right;font-family: Monospace; font-size:28px">
+                        <p style="display:none;">${trialTypeSecond}</p>
                         <p>${displayedSecondWord}</p>
                     </div>
-                    </div>`;
+                  </div>`;
 
-  countries_pairs.push({
-      slider: htmlString
-  });
 
-  pairs_countries_raw.push({
-      pair: [countries_first[j], countries_second[j]]
-  });
+    // Store the HTML and raw pair data
+    dataType.pairsStorage.push({ slider: htmlString });
+    dataType.pairsRaw.push({ pair: [dataType.firstArray[i], dataType.secondArray[i]] });
+
+var matches = [...htmlString.matchAll(regex)];
+//console.log("macthes for 40 trials", matches)
+
+var combinedEntry = {
+  left: {
+    trialType: matches[0][2].trim(),  // Content from the first <p> in the "left" div
+    word: matches[0][3].trim(),      // Content from the second <p> in the "left" div
+    location: matches[0][1]          // "left"
+  },
+  right: {
+    trialType: matches[1][2].trim(), // Content from the first <p> in the "right" div
+    word: matches[1][3].trim(),      // Content from the second <p> in the "right" div
+    location: matches[1][1]          // "right"
+  }
+};
+
+    // Push the combined entry to the respective long array for this data type
+    dataType.wordLocationArrayLong.push({ trial_info: combinedEntry});
+
+  }
 }
 
-u0_u0_cities_1 = [];
-u0_u0_cities_2 = [];
-
-u0_u0_countries_1 = [];
-u0_u0_countries_2 = [];
-
-r0_r0_cities = [];
-r0_r0_countries = [];
-r0_r0_body = [];
-
-// 4 trials U0 U0; R0 R0; U0 R0. - cities
-//outerLoop:
-for (let m = 0; m < 4; m++) {
-  // R0 vs. R0 - cities
-  var related_new_cities_1 = sampleRandomly20(remaining_cities,1)[0].stimulus.match(/>([^<]+)</);
-  var related_new_cities_1 = related_new_cities_1 ? related_new_cities_1[1] : '';
-
-  var related_new_cities_2 = sampleRandomly20(remaining_cities,1)[0].stimulus.match(/>([^<]+)</);
-  var related_new_cities_2 = related_new_cities_2 ? related_new_cities_2[1] : '';
-
-  // U0 vs U0 - cities
-  var unrelated_new = sampleRandomly20(remaining_unrelated,1)[0].stimulus.match(/>([^<]+)</);
-  var unrelated_new_1 = unrelated_new ? unrelated_new[1] : ''; 
-
-  var unrelated_new_2 = sampleRandomly20(remaining_unrelated,1)[0].stimulus.match(/>([^<]+)</);
-  var unrelated_new_2 = unrelated_new_2 ? unrelated_new_2[1] : ''; 
+// Log results for verification
+// console.log("Combined word locations for cities:", wordLocationArray_cities_long);
+// console.log("Combined word locations for body parts:", wordLocationArray_body_long);
+// console.log("Combined word locations for countries:", wordLocationArray_countries_long);
 
 
-  // U0 vs. R0 - cities
-  var unrelated_new_3 = sampleRandomly20(remaining_unrelated,1)[0].stimulus.match(/>([^<]+)</);
-  var unrelated_new_3 = unrelated_new_3 ? unrelated_new_3[1] : ''; 
+////////////////////////////////////
+//// Trial Types: R0,R0 & U0,U0 ////
+////////////////////////////////////
 
-  var related_new_cities_3 = sampleRandomly20(remaining_cities,1)[0].stimulus.match(/>([^<]+)</);
-  var related_new_cities_3 = related_new_cities_3 ? related_new_cities_3[1] : '';
-
-  u0_u0_cities_1.push({R0: related_new_cities_1}, {U0: unrelated_new_1}, {U0: unrelated_new_3})
-  u0_u0_cities_2.push({R0: related_new_cities_2}, {U0: unrelated_new_2}, {R0: related_new_cities_3})
-
-}
-
-u0_u0_cities_1 = u0_u0_cities_1.filter(item => item !== undefined);
-u0_u0_cities_1 = u0_u0_cities_1.slice(0,12)
-
-u0_u0_cities_2 = u0_u0_cities_2.filter(item => item !== undefined);
-u0_u0_cities_2 = u0_u0_cities_2.slice(0,12)
-
-var matched_pairs_cities_raw = [];
+// Arrays to store related (R0) and unrelated (U0) word pairs for cities, body parts, and countries
+var U0U0_R0R0_cities_1 = [];
+var U0U0_R0R0_cities_2 = [];
+var U0U0_R0R0_bdy_1 = [];
+var U0U0_R0R0_bdy_2 = [];
+var U0U0_R0R0_cntr_1 = [];
+var U0U0_R0R0_cntr_2 = [];
 var matched_pairs_cities = [];
-for (let f = 0; f <12; f++) {
-  var [displayedFirstWord, displayedSecondWord] = shuffleWords(Object.values(u0_u0_cities_1[f])[0], Object.values(u0_u0_cities_2[f])[0]);
-  var htmlString = `<div style="width:800px;font-family: Monospace; font-size:28px">
-                <p>Use the response scale to indicate which word you remember, and how confident you are in your response.</p>
-                <div style="width:240px; float: left;font-family: Monospace; font-size:28px">
-                    <p>${displayedFirstWord}</p>
-                </div>
-                <div style="width:240px; float: right;font-family: Monospace; font-size:28px">
-                    <p>${displayedSecondWord}</p>
-                </div>
-                </div>`;
+var matched_pairs_body = [];
+var matched_pairs_cntr = [];
+var matched_pairs_cities_raw = [];
+var matched_pairs_body_raw = [];
+var matched_pairs_cntr_raw = [];
+var wordLocationArray_cities_short = [];
+var wordLocationArray_body_short = [];
+var wordLocationArray_cntr_short = [];
 
-  matched_pairs_cities.push({
-      slider: htmlString
-  });
+// Array of configurations for each data type (cities, body parts, and countries)
+const dataTypes_2 = [
+  {
+    name: "cities",
+    firstArray: U0U0_R0R0_cities_1,
+    secondArray: U0U0_R0R0_cities_2,
+    matchedPairs: matched_pairs_cities,
+    matchedPairsRaw: matched_pairs_cities_raw,
+    wordLocationArrayShort: wordLocationArray_cities_short,
+    remainingSample: remaining_cities,
+    remainingUnrelatedSample: remaining_unrelated
+  },
+  {
+    name: "body parts",
+    firstArray: U0U0_R0R0_bdy_1,
+    secondArray: U0U0_R0R0_bdy_2,
+    matchedPairs: matched_pairs_body,
+    matchedPairsRaw: matched_pairs_body_raw,
+    wordLocationArrayShort: wordLocationArray_body_short,
+    remainingSample: remaining_body,
+    remainingUnrelatedSample: remaining_unrelated
+  },
+  {
+    name: "countries",
+    firstArray: U0U0_R0R0_cntr_1,
+    secondArray: U0U0_R0R0_cntr_2,
+    matchedPairs: matched_pairs_cntr,
+    matchedPairsRaw: matched_pairs_cntr_raw,
+    wordLocationArrayShort: wordLocationArray_cntr_short,
+    remainingSample: remaining_countries,
+    remainingUnrelatedSample: remaining_unrelated
+  }
+];
 
-  matched_pairs_cities_raw.push({
-      pair: [u0_u0_cities_1[f], u0_u0_cities_2[f]]
-  });
+// Regular expression to match the divs with float (left or right) and extract the word inside <p> tags
+var regex = /<div[^>]*float:\s*(left|right)[^>]*>\s*<p[^>]*>([^<]*)<\/p>\s*<p[^>]*>([^<]*)<\/p>/g;
+
+// Loop through each data type (cities, body parts, and countries) to generate trials
+for (const typeConfig of dataTypes_2) {
+  // Generate trials
+  for (let m = 0; m < 4; m++) {
+    // Sample related (R0) words for the current type
+    var related_new_1 = sampleRandomly(typeConfig.remainingSample, 1)[0].stimulus.match(/>([^<]+)</);
+    related_new_1 = related_new_1 ? related_new_1[1] : ''; // Extract word
+
+    var related_new_2 = sampleRandomly(typeConfig.remainingSample, 1)[0].stimulus.match(/>([^<]+)</);
+    related_new_2 = related_new_2 ? related_new_2[1] : ''; // Extract word
+
+    // Sample unrelated (U0) words for the current type
+    var unrelated_new_1 = sampleRandomly(typeConfig.remainingUnrelatedSample, 1)[0].stimulus.match(/>([^<]+)</);
+    unrelated_new_1 = unrelated_new_1 ? unrelated_new_1[1] : ''; // Extract word
+
+    var unrelated_new_2 = sampleRandomly(typeConfig.remainingUnrelatedSample, 1)[0].stimulus.match(/>([^<]+)</);
+    unrelated_new_2 = unrelated_new_2 ? unrelated_new_2[1] : ''; // Extract word
+
+    // Store the word pairs for the current type
+    typeConfig.firstArray.push({ R0: related_new_1 }, { U0: unrelated_new_1 });
+    typeConfig.secondArray.push({ R0: related_new_2 }, { U0: unrelated_new_2 });
+  }
+
+  // Filter out undefined entries and limit to the first 8 items for display
+  typeConfig.firstArray = typeConfig.firstArray.filter(item => item !== undefined).slice(0, 8);
+  typeConfig.secondArray = typeConfig.secondArray.filter(item => item !== undefined).slice(0, 8);
+
+  // Create HTML display and store word locations for each word pair
+  for (let f = 0; f < 8; f++) {
+    // Shuffle and assign displayed words
+    var [firstEntry, secondEntry] = shuffleWords(
+      Object.entries(typeConfig.firstArray[f])[0],
+      Object.entries(typeConfig.secondArray[f])[0]
+    );
+
+    // Extract trialType and word for both left and right
+    var trialTypeFirst = firstEntry[0];
+    var displayedFirstWord = firstEntry[1];
+    var trialTypeSecond = secondEntry[0];
+    var displayedSecondWord = secondEntry[1];
+
+    var htmlString = `<div style="width:800px;font-family: Monospace; font-size:28px">
+                    <p>Use the response scale to indicate which word you remember, and how confident you are in your response.</p>
+                    <div style="width:240px; float: left;font-family: Monospace; font-size:28px">
+                        <p style="display:none;">${trialTypeFirst}</p>
+                        <p>${displayedFirstWord}</p>
+                    </div>
+                    <div style="width:240px; float: right;font-family: Monospace; font-size:28px">
+                        <p style="display:none;">${trialTypeSecond}</p>
+                        <p>${displayedSecondWord}</p>
+                    </div>
+                  </div>`;
+
+    // Store the HTML display and raw pair data for the current type
+    typeConfig.matchedPairs.push({ slider: htmlString });
+    typeConfig.matchedPairsRaw.push({ pair: [typeConfig.firstArray[f], typeConfig.secondArray[f]] });
+
+    // Extract all matches using matchAll for the generated HTML string
+    var matches = [...htmlString.matchAll(regex)];
+    //console.log("macthes for 8 trials", matches)
+
+
+    var combinedEntry = {
+        left: {
+          trialType: matches[0][2].trim(),  // Content from the first <p> in the "left" div
+          word: matches[0][3].trim(),      // Content from the second <p> in the "left" div
+          location: matches[0][1]          // "left"
+        },
+        right: {
+          trialType: matches[1][2].trim(), // Content from the first <p> in the "right" div
+          word: matches[1][3].trim(),      // Content from the second <p> in the "right" div
+          location: matches[1][1]          // "right"
+        }
+      };
+
+    // Push the combined entry to the main array for the current type
+    typeConfig.wordLocationArrayShort.push({'trial_info': combinedEntry});
+     
+  }
 }
 
 
-// 4 trials U0 U0; R0 R0; U0 R0. - body 
-u0_u0_bdy_1 = [];
-u0_u0_bdy_2 = [];
-
-for (let m = 0; m < 4; m++) {
-  // R0 vs. R0 - body  
-  var related_new_body_1 = sampleRandomly20(remaining_body, 1)[0].stimulus.match(/>([^<]+)</);
-  var related_new_body_1 = related_new_body_1 ? related_new_body_1[1] : ''; 
-
-  var related_new_body_2 = sampleRandomly20(remaining_body, 1)[0].stimulus.match(/>([^<]+)</);
-  var related_new_body_2 = related_new_body_2 ? related_new_body_2[1] : ''; 
-
-  // U0 vs U0 - body
-  var unrelated_new_bdy = sampleRandomly20(remaining_unrelated, 1)[0].stimulus.match(/>([^<]+)</);
-  var unrelated_new_bdy = unrelated_new_bdy ? unrelated_new_bdy[1] : ''; 
-
-  var unrelated_new_2_bdy = sampleRandomly20(remaining_unrelated, 1)[0].stimulus.match(/>([^<]+)</);
-  var unrelated_new_2_bdy = unrelated_new_2_bdy ? unrelated_new_2_bdy[1] : ''; 
-
-  // U0 vs. R0 - body
-  var unrelated_new_bdy_3 = sampleRandomly20(remaining_unrelated, 1)[0].stimulus.match(/>([^<]+)</);
-  var unrelated_new_bdy_3 = unrelated_new_bdy_3 ? unrelated_new_bdy_3[1] : ''; 
-
-  var related_new_bdy_3 = sampleRandomly20(remaining_body, 1)[0].stimulus.match(/>([^<]+)</);
-  var related_new_bdy_3 = related_new_bdy_3 ? related_new_bdy_3[1] : '';
-
-  u0_u0_bdy_1.push({R0: related_new_body_1}, {U0: unrelated_new_bdy}, {U0: unrelated_new_bdy_3})
-  u0_u0_bdy_2.push({R0: related_new_body_2}, {U0: unrelated_new_2_bdy}, {R0: related_new_bdy_3})
-}
+// Log results for verification
+// console.log("Combined pairs cities short:", wordLocationArray_cities_short);
+// console.log("Combined pairs body short:", wordLocationArray_body_short);
+// console.log("Combined pairs countries short:", wordLocationArray_cntr_short);
 
 
-u0_u0_bdy_1= u0_u0_bdy_1.filter(item => item !== undefined);
-u0_u0_bdy_1 = u0_u0_bdy_1.slice(0,12)
+///////////////////////////////////////////
+/// Trial Setup for Slider Responses ///
+///////////////////////////////////////////
 
-u0_u0_bdy_2 = u0_u0_bdy_2.filter(item => item !== undefined);
-u0_u0_bdy_2 = u0_u0_bdy_2.slice(0,12)
+// pairs for cities trials
+var all_pairs_cities = matched_pairs_cities_raw.concat(pairs_cities_raw);
+var all_trials_cities = matched_pairs_cities.concat(cities_pairs); // at this point, only the sliders are stored 
 
+//var all_trials_cities = wordLocationArray_cities_short.concat(wordLocationArray_cities_long)
+// Add pair information to each trial for slider responses
+for (let i = 0; i < all_trials_cities.length; i++) {
+  var matches = [...all_trials_cities[i].slider.matchAll(regex)];
+  console.log("macthes for cities trials", matches)
+  var trial_info = {
+    pairs_1: {
+      word: matches[0][3].trim().replace(/^(R[0-9]|U[0-9]):\s*/, ''),
+      location: matches[0][1],  // "left"
+      trialType: matches[0][2].trim().match(/^(R|U)\d+/)[0]
+    },
+    pair_2: {
+      word: matches[1][3].trim().replace(/^(R[0-9]|U[0-9]):\s*/, ''),
+      location: matches[1][1],  // "right"
+      trialType: matches[1][2].trim().match(/^(R|U)\d+/)[0]// Extract trialType for the right word
+    },
+  }; 
+  
+  // test 
+  var word_location = {
+    loc_1: {
+      location: matches[0][1],  // "left"
+    },
+    loc_2: {
+      location: matches[1][1],  // "right"
+    },
+  }; 
 
+  // test 
+  var trialtype = {
+    type_1: {
+      type: matches[0][2].trim().match(/^(R|U)\d+/)[0],  // "trial_1"
+    },
+    type_2: {
+      type: matches[1][2].trim().match(/^(R|U)\d+/)[0],// Extract trialType for the right word// "trial_2"
+    },
+  }; 
+  var TrialContext = "cities";  // save the context of the list
 
-// 4 trials U0 U0; R0 R0; U0 R0. - body 
-matched_pairs_body_raw = [];
-matched_pairs_body = [];
-for (let r = 0; r <12; r++) {
-  var [displayedFirstWord, displayedSecondWord] = shuffleWords(Object.values(u0_u0_bdy_1[r])[0], Object.values(u0_u0_bdy_2[r])[0]);
-  var htmlString = `<div style="width:800px;font-family: Monospace; font-size:28px"+
-              <p> Use the response scale to indicate which word you remember, and how confident you are in your response.<br><br></p>
-              <div style="width:240px; float: left;font-family: Monospace; font-size:28px">
-                  <p>${displayedFirstWord}</p>
-              </div>
-              <div style="width:240px; float: right;font-family: Monospace; font-size:28px">
-                  <p>${displayedSecondWord}</p>
-              </div>
-          </div>
-          `;
-
-  matched_pairs_body.push({
-  slider: htmlString
-  });
-
-  matched_pairs_body_raw.push({
-    pair: [u0_u0_bdy_1[r], u0_u0_bdy_2[r]]
-  });
-}
-
-var all_pairs_body = [];
-all_pairs_body = matched_pairs_body_raw.concat(pairs_body_raw)
-
-// 4 trials U0 U0; R0 R0; U0 R0. - countries 
-u0_u0_cntr_1 = [];
-u0_u0_cntr_2 = [];
-
-for (let m = 0; m < 4; m++) {
-  // R0 vs. R0 - countries  
-  var related_new_cntr_1 = sampleRandomly20(remaining_countries, 1)[0].stimulus.match(/>([^<]+)</);
-  var related_new_cntr_1 = related_new_cntr_1 ? related_new_cntr_1[1] : ''; 
-
-  var related_new_cntr_2 = sampleRandomly20(remaining_countries, 1)[0].stimulus.match(/>([^<]+)</);
-  var related_new_cntr_2 = related_new_cntr_2 ? related_new_cntr_2[1] : ''; 
-
-  // U0 vs U0 - countries
-  var unrelated_new_cntr = sampleRandomly20(remaining_unrelated, 1)[0].stimulus.match(/>([^<]+)</);
-  var unrelated_new_cntr = unrelated_new_cntr ? unrelated_new_cntr[1] : ''; 
-
-  var unrelated_new_2_cntr = sampleRandomly20(remaining_unrelated, 1)[0].stimulus.match(/>([^<]+)</);
-  var unrelated_new_2_cntr = unrelated_new_2_cntr ? unrelated_new_2_cntr[1] : ''; 
-
-  // U0 vs. R0 - body
-  var unrelated_new_cntr_3 = sampleRandomly20(remaining_unrelated, 1)[0].stimulus.match(/>([^<]+)</);
-  var unrelated_new_cntr_3 = unrelated_new_cntr_3 ? unrelated_new_cntr_3[1] : ''; 
-
-  var related_new_cntr_3 = sampleRandomly20(remaining_countries, 1)[0].stimulus.match(/>([^<]+)</);
-  var related_new_cntr_3 = related_new_cntr_3 ? related_new_cntr_3[1] : '';
-
-
-  u0_u0_cntr_1.push({R0: related_new_cntr_1}, {U0: unrelated_new_cntr}, {U0: unrelated_new_cntr_3})
-  u0_u0_cntr_2.push({R0: related_new_cntr_2}, {U0: unrelated_new_2_cntr}, {R0: related_new_cntr_3})
-}
-
-u0_u0_cntr_1 = u0_u0_cntr_1.filter(item => item !== undefined);
-u0_u0_cntr_1 = u0_u0_cntr_1.slice(0,12)
-
-u0_u0_cntr_2 = u0_u0_cntr_2.filter(item => item !== undefined);
-u0_u0_cntr_2 = u0_u0_cntr_2.slice(0,12)
-
-// 4 trials U0 U0; R0 R0; U0 R0. - body 
-
-matched_pairs_cntr = [];
-matched_pairs_cntr_raw = [];
-for (let r = 0; r < 12; r++) {
-  var [displayedFirstWord, displayedSecondWord] = shuffleWords(Object.values(u0_u0_cntr_1[r])[0], Object.values(u0_u0_cntr_2[r])[0]);
-  var htmlString = `<div style="width:800px;font-family: Monospace; font-size:28px"+
-              <p> Use the response scale to indicate which word you remember, and how confident you are in your response.<br><br></p>
-              <div style="width:240px; float: left;font-family: Monospace; font-size:28px">
-                  <p>${displayedFirstWord}</p>
-              </div>
-              <div style="width:240px; float: right;font-family: Monospace; font-size:28px">
-                  <p>${displayedSecondWord}</p>
-              </div>
-          </div>
-          `;
-
-  matched_pairs_cntr.push({
-  slider: htmlString
-  });
-
-  matched_pairs_cntr_raw.push({
-    pair: [u0_u0_cntr_1[r], u0_u0_cntr_2[r]]
-  });
+  // Assign `pair` and `trial_conterxt` to `all_trials_cities[i]`
+  all_trials_cities[i]['trial_info'] = trial_info;
+  all_trials_cities[i]['exp_block'] = TrialContext;
+  all_trials_cities[i]['word_loc'] = word_location;
+  all_trials_cities[i]['trialtype'] = trialtype;
 }
 
 
 
+
+// Define the slider task with labels for confidence scale
 var trial_slider = {
     type: jsPsychHtmlSliderResponse,
     stimulus: jsPsych.timelineVariable('slider'),
-    pair: jsPsych.timelineVariable('pair'),
-    save_trial_parameters: {pair: true, stimulus: true},
+    trial_info: jsPsych.timelineVariable('trial_info'),
+    trialtype: jsPsych.timelineVariable('trialtype'), 
+    location: jsPsych.timelineVariable('word_loc'),
+    block: jsPsych.timelineVariable('exp_block'),
+    save_trial_parameters: {stimulus: true, trial_info: true, 
+                            trialtype: true, location: true, block: true},
     require_movement: true,
     slider_start: 0,
-    min:-100, 
-    max:100,
-    labels: ['<span style ="font-family: Monospace; font-size:20px; margin:10px">100% positive</span>', 
-             '<span style ="font-family: Monospace; font-size:20px; margin:10px">pretty sure</span>', 
-             '<span style ="font-family: Monospace; font-size:20px; margin:10px">guess</span>', 
-             '' , 
-             '<span style ="font-family: Monospace; font-size:20px; margin:10px">guess</span>', 
-             '<span style ="font-family: Monospace; font-size:20px; margin:10px">pretty sure</span>', 
-             '<span style ="font-family: Monospace; font-size:20px; margin:10px">100% positive</span>'],
+    min: -100, 
+    max: 100,
+    labels: [
+        '<span style ="font-family: Monospace; font-size:20px; margin:10px">100% positive</span>',
+        '<span style ="font-family: Monospace; font-size:20px; margin:10px">pretty sure</span>', 
+        '<span style ="font-family: Monospace; font-size:20px; margin:10px">guess</span>',
+        '', 
+        '<span style ="font-family: Monospace; font-size:20px; margin:10px">guess</span>', 
+        '<span style ="font-family: Monospace; font-size:20px; margin:10px">pretty sure</span>',
+        '<span style ="font-family: Monospace; font-size:20px; margin:10px">100% positive</span>'
+          ],
 };
 
-// create an in-between phase between the test lists
+// Create an breake between test blocks
 var new_list = {
     type: jsPsychHtmlKeyboardResponse,
     stimulus: "<div style = 'font-family: Monospace; font-size:20px'> End of Block 1. Please press the SPACE key when you are ready to begin the next memory task</div>",
     choices: ["Enter"]
 };
 
-
-var all_pairs_cities = [];
-all_pairs_cities = matched_pairs_cities_raw.concat(pairs_cities_raw)
-
-var all_trials_cities= [];
-all_trials_cities = matched_pairs_cities.concat(cities_pairs);
-
-// Add pair information to each "slider" trial
-for( var i = 0; i < all_trials_cities.length; i++){                 
-  pair = {pairs_1: all_pairs_cities[i].pair[0], 
-                                  pairs_2: all_pairs_cities[i].pair[1]}
-  all_trials_cities[i]['pair'] = pair
-}
 
 
 var cities_testPhase = {
@@ -827,17 +905,65 @@ var cities_testPhase = {
   randomize_order: true,
 }
 
-var all_trials_countries = [];
-all_trials_countries = matched_pairs_cntr.concat(countries_pairs);
+
+//body parts
+var all_pairs_body = [];
+all_pairs_body = matched_pairs_body_raw.concat(pairs_body_raw)
 
 var all_trials_body= [];
 var all_trials_body = matched_pairs_body.concat(body_pairs);
 
-// Add pair information to each "slider" trial
-for( var i = 0; i < all_trials_body.length; i++){
-  pair = {pairs_1: all_pairs_body[i].pair[0], 
-                                  pairs_2: all_pairs_body[i].pair[1]}
-  all_trials_body[i]['pair'] = pair
+// // Add pair information to each "slider" trial
+// for( var i = 0; i < all_trials_body.length; i++){
+//   pair = {pairs_1: all_pairs_body[i].pair[0], 
+//           pairs_2: all_pairs_body[i].pair[1]}
+//   all_trials_body[i]['pair'] = pair
+// }
+
+
+//var all_trials_cities = wordLocationArray_cities_short.concat(wordLocationArray_cities_long)
+// Add pair information to each trial for slider responses
+for (let i = 0; i < all_trials_body.length; i++) {
+  var matches = [...all_trials_body[i].slider.matchAll(regex)];
+  console.log("macthes for body trials", matches)
+  var trial_info = {
+    pairs_1: {
+      word: matches[0][3].trim().replace(/^(R[0-9]|U[0-9]):\s*/, ''),
+      location: matches[0][1],  // "left"
+      trialType: matches[0][2].trim().match(/^(R|U)\d+/)[0]
+    },
+    pair_2: {
+      word: matches[1][3].trim().replace(/^(R[0-9]|U[0-9]):\s*/, ''),
+      location: matches[1][1],  // "right"
+      trialType: matches[1][2].trim().match(/^(R|U)\d+/)[0]// Extract trialType for the right word
+    },
+  }; 
+  
+  // test 
+  var word_location = {
+    loc_1: {
+      location: matches[0][1],  // "left"
+    },
+    loc_2: {
+      location: matches[1][1],  // "right"
+    },
+  }; 
+
+  // test 
+  var trialtype = {
+    type_1: {
+      type: matches[0][2].trim().match(/^(R|U)\d+/)[0],  // "trial_1"
+    },
+    type_2: {
+      type: matches[1][2].trim().match(/^(R|U)\d+/)[0],// Extract trialType for the right word// "trial_2"
+    },
+  }; 
+  var TrialContext = "body";  // save the context of the list
+  // Assign `pair` and `trial_conterxt` to `all_trials_body[i]`
+  all_trials_body[i]['trial_info'] = trial_info;
+  all_trials_body[i]['exp_block'] = TrialContext;
+  all_trials_body[i]['word_loc'] = word_location;
+  all_trials_body[i]['trialtype'] = trialtype;
 }
 
 var body_testPhase = {
@@ -863,11 +989,48 @@ var all_trials_countries= [];
 var all_trials_countries = matched_pairs_cntr.concat(countries_pairs);
 
 // Add pair information to each "slider" trial
-for( var i = 0; i < all_trials_countries.length; i++){
-                 
-  pair = {pairs_1: all_pairs_cntr[i].pair[0], 
-                                  pairs_2: all_pairs_cntr[i].pair[1]}
-  all_trials_countries[i]['pair'] = pair
+for (let i = 0; i < all_trials_countries.length; i++) {
+  var matches = [...all_trials_countries[i].slider.matchAll(regex)];
+  console.log("macthes for countries trials", matches)
+  var trial_info = {
+    pairs_1: {
+      word: matches[0][3].trim().replace(/^(R[0-9]|U[0-9]):\s*/, ''),
+      location: matches[0][1],  // "left"
+      trialType: matches[0][2].trim().match(/^(R|U)\d+/)[0]
+    },
+    pair_2: {
+      word: matches[1][3].trim().replace(/^(R[0-9]|U[0-9]):\s*/, ''),
+      location: matches[1][1],  // "right"
+      trialType: matches[1][2].trim().match(/^(R|U)\d+/)[0]// Extract trialType for the right word
+    },
+  }; 
+  
+  // test 
+  var word_location = {
+    loc_1: {
+      location: matches[0][1],  // "left"
+    },
+    loc_2: {
+      location: matches[1][1],  // "right"
+    },
+  }; 
+
+  // test 
+  var trialtype = {
+    type_1: {
+      type: matches[0][2].trim().match(/^(R|U)\d+/)[0],  // "trial_1"
+    },
+    type_2: {
+      type: matches[1][2].trim().match(/^(R|U)\d+/)[0],// Extract trialType for the right word// "trial_2"
+    },
+  }; 
+  var TrialContext = "countries";  // save the context of the list
+  // Assign `pair` and `trial_conterxt` to `all_trials_body[i]`
+  all_trials_countries[i]['trial_info'] = trial_info;
+  all_trials_countries[i]['exp_block'] = TrialContext;
+  all_trials_countries[i]['word_loc'] = word_location;
+  all_trials_countries[i]['trialtype'] = trialtype;
+
 }
 
 
@@ -896,8 +1059,7 @@ timeline = [
   {
      type: jsPsychSpeechRecording,
      start: true
-  },  
-            
+  },         
   instruction_1,
   instructions_1_2, 
   instruction_1_3, 
@@ -927,11 +1089,9 @@ timeline = [
   }
 ]
                      
-console.log(timeline)
+
+
 jsPsych.run(timeline);
-
-
-
 
 </script>
 
