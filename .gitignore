@@ -19,7 +19,6 @@ logs/*
 
 test
 
-*.png
 *.wav
 #*.csv
 *.zip
