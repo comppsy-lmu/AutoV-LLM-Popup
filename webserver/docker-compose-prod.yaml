@@ -6,7 +6,7 @@ services:
     build: .
 
     ports:
-      - "8005:8080"
+      - "8006:8080"
     volumes:
       # sync ressources folder
       - ../ressources:/usr/src/app/ressources
