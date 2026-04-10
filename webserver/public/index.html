@@ -17,23 +17,10 @@
 <script>
 
 
-var POPUP_CONFIG = [
-  { min: 0,  max: 30,  probability: 0.30 },
-  { min: 31, max: 70,  probability: 1.00 },
-  { min: 71, max: 100, probability: 0.20 },
-];
-
+var POPUP_PROBABILITY_DEFAULT = 0.20;
+var POPUP_PROBABILITY_U0R0_MIDDLE = 0.50;
+var POPUP_MIDDLE_THRESHOLD = 33;
 var POPUP_MESSAGE = "Keep in mind to talk about what factors helped you remember the word!";
-
-function shouldShowPopup(absValue) {
-  for (var i = 0; i < POPUP_CONFIG.length; i++) {
-    var range = POPUP_CONFIG[i];
-    if (absValue >= range.min && absValue <= range.max) {
-      return Math.random() < range.probability;
-    }
-  }
-  return false;
-}
 
 /* initialize jsPsych */
 var jsPsych = initJsPsych({
@@ -915,41 +902,69 @@ var trial_slider = {
           ],
 
     on_load: function() {
-      window._currentTrialPopupShown = false;
-      var firstInteractionHandled = false;
       var sliderEl = document.querySelector('#jspsych-html-slider-response-response');
 
-      function onFirstSliderInteraction() {
-        if (firstInteractionHandled) return;
-        
-        var absValue = Math.abs(sliderEl.valueAsNumber);
+      var tt = jsPsych.timelineVariable('trialtype', true);
+      var t1 = tt.type_1.type;
+      var t2 = tt.type_2.type;
+      var isU0R0 = (t1 === 'U0' && t2 === 'R0') || (t1 === 'R0' && t2 === 'U0');
 
-        if (shouldShowPopup(absValue)) {
-          firstInteractionHandled = true;
-          window._currentTrialPopupShown = true;
-
-          var overlay = document.createElement('div');
-          overlay.id = 'popup-reminder-overlay';
-          overlay.style.cssText =
-            'position:fixed; top:0; left:0; width:100%; padding:18px 0; ' +
-            'background-color:rgba(50,100,220,0.92); color:white; ' +
-            'font-family:Monospace; font-size:22px; text-align:center; ' +
-            'z-index:10000; box-shadow:0 2px 8px rgba(0,0,0,0.3);';
-          overlay.textContent = POPUP_MESSAGE;
-          document.body.appendChild(overlay);
-        }
+      // DEBUG: show trial type in top-right corner
+      if (TESTING_MODE) {
+        var debugLabel = document.createElement('div');
+        debugLabel.id = 'debug-trial-label';
+        debugLabel.style.cssText = 'position:fixed;top:5px;right:10px;font-family:Monospace;font-size:14px;color:#888;z-index:9999;';
+        debugLabel.textContent = t1 + ' vs ' + t2 + (isU0R0 ? ' [U0R0]' : '');
+        document.body.appendChild(debugLabel);
       }
 
-      sliderEl.addEventListener('mouseup', onFirstSliderInteraction);
-      sliderEl.addEventListener('pointerup', onFirstSliderInteraction);
-      sliderEl.addEventListener('change', onFirstSliderInteraction);
+      var popupShown = false;
+      function showPopup() {
+        if (popupShown) return;
+        popupShown = true;
+        var overlay = document.createElement('div');
+        overlay.id = 'popup-reminder-overlay';
+        overlay.style.cssText =
+          'position:fixed; top:0; left:0; width:100%; padding:18px 0; ' +
+          'background-color:rgba(50,100,220,0.92); color:white; ' +
+          'font-family:Monospace; font-size:22px; text-align:center; ' +
+          'z-index:10000; box-shadow:0 2px 8px rgba(0,0,0,0.3);';
+        overlay.textContent = POPUP_MESSAGE;
+        document.body.appendChild(overlay);
+      }
+
+      if (isU0R0) {
+        var middleRolled = false;
+        sliderEl.addEventListener('change', function() {
+          if (popupShown) return;
+          var absValue = Math.abs(sliderEl.valueAsNumber);
+          if (absValue > POPUP_MIDDLE_THRESHOLD) {
+            showPopup();
+          } else if (!middleRolled) {
+            middleRolled = true;
+            if (Math.random() < POPUP_PROBABILITY_U0R0_MIDDLE) {
+              showPopup();
+            }
+          }
+        });
+      } else {
+        var decided = false;
+        sliderEl.addEventListener('change', function() {
+          if (decided) return;
+          decided = true;
+          if (Math.random() < POPUP_PROBABILITY_DEFAULT) {
+            showPopup();
+          }
+        });
+      }
     },
 
     on_finish: function(data) {
-      data.popup_shown = window._currentTrialPopupShown || false;
+      data.popup_shown = !!document.getElementById('popup-reminder-overlay');
       var el = document.getElementById('popup-reminder-overlay');
       if (el) el.remove();
-      window._currentTrialPopupShown = false;
+      var dbg = document.getElementById('debug-trial-label');
+      if (dbg) dbg.remove();
     }
 };
 
