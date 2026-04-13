@@ -20,7 +20,7 @@
 var POPUP_PROBABILITY_DEFAULT = 0.20;
 var POPUP_PROBABILITY_U0R0_MIDDLE = 0.50;
 var POPUP_MIDDLE_THRESHOLD = 33;
-var POPUP_MESSAGE = "Keep in mind to talk about what factors helped you remember the word!";
+var POPUP_MESSAGE = "Could you please take a moment and explain to us why you chose that point on the scale?";
 
 /* initialize jsPsych */
 var jsPsych = initJsPsych({
@@ -927,7 +927,7 @@ var trial_slider = {
         overlay.style.cssText =
           'position:fixed; top:0; left:0; width:100%; padding:18px 0; ' +
           'background-color:rgba(50,100,220,0.92); color:white; ' +
-          'font-family:Monospace; font-size:22px; text-align:center; ' +
+          'font-family:Monospace; font-size:18px; text-align:center; ' +
           'z-index:10000; box-shadow:0 2px 8px rgba(0,0,0,0.3);';
         overlay.textContent = POPUP_MESSAGE;
         document.body.appendChild(overlay);
